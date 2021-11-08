@@ -8,7 +8,8 @@ This project will give you a small "Todo" application to build in Vue, using the
 
 ## Resources
 
-[VueJS Docs](https://vuejs.org/v2/guide/index.html)
+- [VueJS Docs](https://vuejs.org/v2/guide/index.html)
+- [Vue DevTools](https://chrome.google.com/webstore/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
 
 ## Objectives
 
