@@ -1,4 +1,4 @@
-# Vue Training
+# Training - Vue 2 - Introduction
 
 ## Instructions
 
