@@ -4,7 +4,8 @@
 
 
   <div>
-    <p>Number of Notes: {{numberOfNotes}}</p>
+    <p>Total Notes: {{numberOfNotes}}</p>
+    <p>Notes Displayed: {{numberOfFilteredNotes}}</p>
   </div>
 
   <!-- Filter Notes -->
@@ -52,6 +53,7 @@
       // methods
       const numberOfNotes = computed(() => notes.value.length)
 
+
       const filteredNotes = computed(() =>
         notes.value.filter((note) => {
           return note.text
@@ -59,6 +61,8 @@
             .includes(filterText.value.toLowerCase())
         })
       )
+
+      const numberOfFilteredNotes = computed(() => filteredNotes.value.length)
 
       function deleteNote(note) {
         for (let i = 0; i < notes.value.length; i++) {
@@ -111,7 +115,8 @@
         deleteNote,
         numberOfNotes,
         userEntersClear,
-        filteredNotes
+        filteredNotes,
+        numberOfFilteredNotes
       }
     }
   }).mount('#app')
