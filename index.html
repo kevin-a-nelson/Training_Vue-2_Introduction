@@ -1,40 +1,88 @@
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
 <div id="app">
+
+
+  <div>
+    <p>Number of Notes: {{numberOfNotes}}</p>
+  </div>
+
+  <!-- Filter Notes -->
+  <div>
+    <input placeholder="search" v-model="filterText">
+  </div>
+
+  <!-- Add Note -->
   <input v-on:keyup.enter="addNewNote" v-model="noteToAdd"></input>
   <button @click="addNewNote">Add</button>
-  <div v-for="note in notes">
-    <div v-if="noteToEdit.id == note.id">
-      <input v-on:keyup.enter="doneEdit" v-model="noteToEdit.text">
-      <button @click="doneEdit">Done</button>
-    </div>
-    <div v-else>
+
+  <!-- List Notes -->
+  <ul v-for="note in filteredNotes">
+
+    <!-- Edit Note -->
+    <li v-if="noteToEdit.id == note.id">
+      <form @submit.prevent="saveEdit">
+        <input v-on:keyup.enter="saveEdit" :value="noteToEdit.text">
+        <button>Save</button>
+      </form>
+    </li>
+
+    <!-- View Note -->
+    <li v-else>
       {{note.text}}
       <button @click="editNote(note)">Edit</button>
-    </div>
-  </div>
+      <button @click="deleteNote(note)">Delete</button>
+    </li>
+
+  </ul>
 </div>
 
 <script>
-  const { createApp, ref } = Vue
+  const { createApp, ref, computed, watch } = Vue
 
 
   createApp({
     setup() {
       // variables
       const noteToAdd = ref('')
+      const filterText = ref('')
       const noteToEdit = ref({ id: -1, text: "" })
-      const notes = ref([{ id: 1, text: "hello" }])
+      const notes = ref([{ id: 1, text: "Hello World" }])
 
       // methods
+      const numberOfNotes = computed(() => notes.value.length)
+
+      const filteredNotes = computed(() =>
+        notes.value.filter((note) => {
+          return note.text
+            .toLowerCase()
+            .includes(filterText.value.toLowerCase())
+        })
+      )
+
+      function deleteNote(note) {
+        for (let i = 0; i < notes.value.length; i++) {
+          if (notes.value[i].id != note.id) { continue }
+          notes.value.splice(i, 1)
+          return
+        }
+      }
+
       function editNote(note) { noteToEdit.value = note }
-      function doneEdit() {
+      function saveEdit(event) {
+        let editedNoteText = event.target[0].value
+
+        if (editedNoteText == "") {
+          noteToEdit.value = { id: -1, text: "" }
+          return
+        }
+
         for (let i = 0; i < notes.value.length; i++) {
           if (notes.value[i].id != noteToEdit.value.id) { continue }
 
-          notes.value[i] = noteToEdit.value
+          notes.value[i].text = editedNoteText
           noteToEdit.value = { id: -1, text: "" }
-          break
+          return
         }
       }
       function addNewNote() {
@@ -43,13 +91,27 @@
         noteToAdd.value = ""
       }
 
+      function userEntersClear() {
+        if (noteToAdd.value == "clear") {
+          notes.value = []
+          noteToAdd.value = ""
+        }
+      }
+
+      watch(noteToAdd, userEntersClear)
+
       return {
         noteToAdd,
         notes,
         noteToEdit,
+        filterText,
         addNewNote,
         editNote,
-        doneEdit
+        saveEdit,
+        deleteNote,
+        numberOfNotes,
+        userEntersClear,
+        filteredNotes
       }
     }
   }).mount('#app')
